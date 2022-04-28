@@ -32,13 +32,13 @@ def NMFprojection(X, fixed_W, normalized=False):
                                           H=np.array(fixed_H, dtype = 'float64'))
     H = W.T
     df_H = pd.DataFrame(H, columns=X.columns, index=fixed_W.columns)
-    df_RSS = pd.DataFrame(np.sqrt(((fixed_W.dot(df_H) - X) ** 2).sum(axis=0)) / X.shape[0], 
+    df_RMSE = pd.DataFrame(np.sqrt(((fixed_W.dot(df_H) - X) ** 2).sum(axis=0) / X.shape[0]), 
                             columns=['Error'], index=X.columns)
     
-    print("stats of RSS")
-    print(df_RSS.describe())
+    print("stats of RSME")
+    print(df_RMSE.describe())
     
-    return X, df_H, df_RSS
+    return X, df_H, df_RMSE
     
 
 if __name__ == "__main__":
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
     f_outputprefix = args.outputprefix
 
-    _, df_H, df_RSS = NMFprojection(X, fixed_W, normalized=args.normalized)
+    _, df_H, df_RMSE = NMFprojection(X, fixed_W, normalized=args.normalized)
 
     df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
-    df_RSS.to_csv('{}_RSS.csv'.format(f_outputprefix))
+    df_RMSE.to_csv('{}_RMSE.csv'.format(f_outputprefix))
