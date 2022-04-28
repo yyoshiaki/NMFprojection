@@ -32,7 +32,10 @@ optional arguments:
 
 example
 ```
-python NMFprojection.py --outputprefix test/STR1.5_Fr1.2.3.5.6 test/STR1.5_Fr1.2.3.5.6_scaledTPM.tsv data/NMF.W.CD4T.csv.gz
+python NMFprojection.py \
+    --outputprefix test/STR1.5_Fr1.2.3.5.6 \
+    test/STR1.5_Fr1.2.3.5.6_scaledTPM.tsv \
+    data/NMF.W.CD4T.csv.gz
 ```
 
 ## Available precomputed NMF W
