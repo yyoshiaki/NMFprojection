@@ -32,14 +32,31 @@ def NMFprojection(X, fixed_W, normalized=False):
                                           H=np.array(fixed_H, dtype = 'float64'))
     H = W.T
     df_H = pd.DataFrame(H, columns=X.columns, index=fixed_W.columns)
+    
+    return X, df_H, fixed_W
+    
+
+def calc_RMSE(X, fixed_W, df_H):
     df_RMSE = pd.DataFrame(np.sqrt(((fixed_W.dot(df_H) - X) ** 2).sum(axis=0) / X.shape[0]), 
                             columns=['Error'], index=X.columns)
     
     print("stats of RSME")
     print(df_RMSE.describe())
-    
-    return X, df_H, df_RMSE
-    
+    return df_RMSE
+
+
+def calc_EV(X, fixed_W, df_H):
+    l_ev = []
+    for c in df_H.index:
+        l_ev.append(1 - ((fixed_W[[c]].dot(df_H.loc[[c]]) - X) ** 2).sum().sum() / np.sum(np.array(X) ** 2))
+
+    l_ev.append(1 - ((fixed_W.dot(df_H) - X) ** 2).sum().sum() / np.sum(np.array(X) ** 2))
+
+    df_ev = pd.DataFrame(l_ev, columns=['ExplainedVariance'], index=list(df_H.index) + ['ALL'])
+    print("stats of Explained Variance")
+    print(df_ev)
+    return df_ev
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = 'NMFprojection')
@@ -57,7 +74,12 @@ if __name__ == "__main__":
     fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
     f_outputprefix = args.outputprefix
 
-    _, df_H, df_RMSE = NMFprojection(X, fixed_W, normalized=args.normalized)
+    X, df_H, fixed_W = NMFprojection(X, fixed_W, normalized=args.normalized)
+
+    df_RMSE = calc_RMSE(X, fixed_W, df_H)
+    df_ev = calc_EV(X, fixed_W, df_H)
+
 
     df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
     df_RMSE.to_csv('{}_RMSE.csv'.format(f_outputprefix))
+    df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))
