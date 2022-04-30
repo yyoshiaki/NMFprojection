@@ -1,13 +1,5 @@
 # NMFprojection
-NMFprojection
-
-## Tested environment
-
-- Python==3.8.10
-- numpy==1.20.3
-- scipy==1.7.1
-- pandas==1.3.3
-- scikit-learn==0.24.2
+Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed matrix, input gene expression should be scaledTPM or TPM. 
 
 ## Usage
 
@@ -40,10 +32,22 @@ python NMFprojection.py \
 
 ## Available precomputed NMF W
 
-- CD4T cell (pan-autoimmune peripheral CD4T, yasumizu et al., unpublished) : `data/NMF.W.CD4T.csv.gz`
+### CD4T cell (pan-autoimmune peripheral CD4T, yasumizu et al., unpublished, UMI-based) : `data/NMF.W.CD4T.csv.gz`
+
+'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1'
 
 ## Outputs
+- *_projection.csv : decomposited H
+- *_ExplainedVariance.csv : explained variances (last row indicates Evar of all components)
+- *_RMSE.csv : RMSE
 
+## Tested environment
+
+- Python==3.8.10
+- numpy==1.20.3
+- scipy==1.7.1
+- pandas==1.3.3
+- scikit-learn==0.24.2
 
 ## Example of visualization
 
