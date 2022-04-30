@@ -11,6 +11,10 @@ seed = 0
 
 
 def NMFprojection(X, fixed_W, normalized=False):
+    if X.index.duplicated().sum() > 0:
+        raise ValueError("Gene names are duplicated!")
+
+
     # normalize X
     if normalized == False:
         X = (X * 10**4) / X.sum()
