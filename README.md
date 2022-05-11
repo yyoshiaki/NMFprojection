@@ -4,22 +4,27 @@ Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed
 ## Usage
 
 ```
-usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized]
-                        input fixedW
+usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_hvgstats] input fixedW
 
 NMFprojection
 
 positional arguments:
-  input                 input csv/tsv of gene expressions. UMI, scaledTPM, TPM
-                        can be used. Row: genes, Columns: samples.
-  fixedW                input csv/tsv of precomputed W. Row: genes, Columns:
-                        components.
+  input                 input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.
+  fixedW                input csv/tsv of precomputed W. Row: genes, Columns: components.
 
 optional arguments:
   -h, --help            show this help message and exit
   --outputprefix OUTPUTPREFIX
                         output prefix. default=NMF
   --normalized          if normalized and log transformed, specify this flag.
+  --min_mean MIN_MEAN   parameter for calculation of HVGs overlap
+  --max_mean MAX_MEAN   parameter for calculation of HVGs overlap
+  --min_disp MIN_DISP   parameter for calculation of HVGs overlap.
+  --n_top_genes N_TOP_GENES
+                        parameter for calculation of HVGs overlap.
+  --off_calc_hvg_overlap
+                        turn off calc_hvg_overlap
+  --save_hvgstats       save hvg stats (hvg_overlap).
 ```
 
 example

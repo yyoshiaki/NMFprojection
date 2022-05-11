@@ -88,13 +88,13 @@ if __name__ == "__main__":
     parser.add_argument('--normalized', action='store_true', 
                         help='if normalized and log transformed, specify this flag.')
     parser.add_argument('--min_mean', type=float, default=0.0125,
-                        help='parameter for in calculation of HVGs overlap')
+                        help='parameter for calculation of HVGs overlap')
     parser.add_argument('--max_mean', type=float, default=3,
-                        help='parameter for in calculation of HVGs overlap')
+                        help='parameter for calculation of HVGs overlap')
     parser.add_argument('--min_disp', type=float, default=0.1,
-                        help='parameter for in calculation of HVGs overlap.')
+                        help='parameter for calculation of HVGs overlap.')
     parser.add_argument('--n_top_genes', default=500,
-                        help='parameter for in calculation of HVGs overlap.')
+                        help='parameter for calculation of HVGs overlap.')
     parser.add_argument('--off_calc_hvg_overlap', action='store_true', 
                         help='turn off calc_hvg_overlap')
     parser.add_argument('--save_hvgstats', action='store_true', 
