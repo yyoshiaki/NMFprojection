@@ -117,15 +117,15 @@ anno = row_anno_barplot(
   gp = gpar(fill = ocean.balance(10)[5], lwd = 0),
   width = unit(3, "cm"))
 p <- Heatmap(t(scale(t(df.proj))), name=" ",
-        row_order = rownames(df.proj), column_order = colnames(df.proj),
-        right_annotation = rowAnnotation(EVar = anno, simple_anno_size = unit(4, "cm")),
-        col=ocean.balance(20), 
-        row_labels = row.labels, 
-        rect_gp = gpar(col = "white", lwd = 2),
-        width = ncol(mat)*unit(3, "mm"), 
-        height = nrow(mat)*unit(5, "mm")
+             row_order = rownames(df.proj), column_order = colnames(df.proj),
+             right_annotation = rowAnnotation(EVar = anno, simple_anno_size = unit(4, "cm")),
+             col = colorRamp2(seq(-3, 3, length = 20), ocean.balance(20)),
+             row_labels = row.labels, 
+             rect_gp = gpar(col = "white", lwd = 2),
+             width = ncol(mat)*unit(5, "mm"), 
+             height = nrow(mat)*unit(5, "mm"),
+             column_split = colnames(df.proj) %>% str_extract("Fr.")
 )
-
 p
 
 pdf("test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.pdf")
