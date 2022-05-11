@@ -13,7 +13,9 @@ git clone https://github.com/yyoshiaki/NMFprojection.git
 ## Usage
 
 ```
-usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_fullhvgstats] input fixedW
+usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN]
+ [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap]
+  [--save_fullhvgstats] input fixedW
 
 NMFprojection
 
