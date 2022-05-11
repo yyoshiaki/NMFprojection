@@ -57,6 +57,7 @@ Genes were mapped to mouse genes from `NMF.W.CD4T.csv.gz` using the mouse-human 
 - scipy==1.7.1
 - pandas==1.3.3
 - scikit-learn==0.24.2
+- scanpy==1.8.1
 
 ## Example of visualization
 
