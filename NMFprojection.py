@@ -66,7 +66,9 @@ def calc_hvg_overlap(X_norm, fixed_W, min_mean=0.0125, max_mean=3, min_disp=0.1,
 
     a = sc.AnnData(X_norm).T
     a = a[:,~a.var.index.str.startswith(tup_blacklist)]
-    sc.pp.highly_variable_genes(a, min_mean=min_mean, max_mean=max_mean, min_disp=min_disp, n_bins=300)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        sc.pp.highly_variable_genes(a, min_mean=min_mean, max_mean=max_mean, min_disp=min_disp, n_bins=300)
     df_stats = a.var[['dispersions_norm', 'highly_variable', 'means']]
     df_stats['selected'] = df_stats.index.isin(fixed_W.index)
 
@@ -97,8 +99,8 @@ if __name__ == "__main__":
                         help='parameter for calculation of HVGs overlap.')
     parser.add_argument('--off_calc_hvg_overlap', action='store_true', 
                         help='turn off calc_hvg_overlap')
-    parser.add_argument('--save_hvgstats', action='store_true', 
-                        help='save hvg stats (hvg_overlap).')
+    parser.add_argument('--save_fullhvgstats', action='store_true', 
+                        help='save full stats of hvg (hvg_overlap).')
     args = parser.parse_args()
 
     X = pd.read_csv(args.input, index_col=0, delim_whitespace=True) # gene x cell or samples
@@ -109,21 +111,27 @@ if __name__ == "__main__":
     df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
 
     df_RMSE = calc_RMSE(X_trunc, fixed_W, df_H)
-    print("stats of RSME")
+    print("## Stats of RSME")
     print(df_RMSE.describe())
     df_RMSE.to_csv('{}_RMSE.csv'.format(f_outputprefix))
 
     df_ev = calc_EV(X_trunc, fixed_W, df_H)
-    print("stats of Explained Variance")
+    print("## Stats of Explained Variance")
     print(df_ev)
     df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))
 
     if not args.off_calc_hvg_overlap:
         df_stats = calc_hvg_overlap(X_norm, fixed_W, min_mean=args.min_mean, max_mean=args.max_mean, min_disp=args.min_disp,
                                     n_top_genes=args.n_top_genes)
-        print('Prop. overlap of HVGs :', df_stats.loc[df_stats['highly_variable'], 'selected'].sum() / df_stats['highly_variable'].sum(), 
-        'in ', df_stats.highly_variable.sum(), 'genes')
-        if args.save_hvgstats:
+        print('\n Stats for overlap of HVGs')
+        msg = '# Retained genes : %s \n' % fixed_W.shape[0]
+        msg += 'Prop. overlap of HVGs : {} in {} query HVGs'.format(
+            df_stats.loc[df_stats['highly_variable'], 'selected'].sum() / df_stats['highly_variable'].sum(), 
+            df_stats.highly_variable.sum())
+        print(msg)
+        if args.save_fullhvgstats:
             df_stats.to_csv('{}_hvgstats.csv'.format(f_outputprefix))
+        with open('{}_hvgstats.txt'.format(f_outputprefix), 'w') as f:
+            f.write(msg)
 
     df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))

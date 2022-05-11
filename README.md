@@ -1,10 +1,19 @@
 # NMFprojection
 Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed matrix, input gene expression should be scaledTPM or TPM. 
 
+## Install
+
+After installing python3,
+
+```
+pip install numpy scipy pandas scikit-learn scanpy
+git clone https://github.com/yyoshiaki/NMFprojection.git
+```
+
 ## Usage
 
 ```
-usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_hvgstats] input fixedW
+usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_fullhvgstats] input fixedW
 
 NMFprojection
 
@@ -24,7 +33,7 @@ optional arguments:
                         parameter for calculation of HVGs overlap.
   --off_calc_hvg_overlap
                         turn off calc_hvg_overlap
-  --save_hvgstats       save hvg stats (hvg_overlap).
+  --save_fullhvgstats   save full stats of hvg (hvg_overlap).
 ```
 
 example
@@ -40,7 +49,7 @@ python NMFprojection.py \
 ### Human CD4T cell (pan-autoimmune peripheral CD4T, yasumizu et al., unpublished, UMI-based) : `data/NMF.W.CD4T.csv.gz`
 
 - Factors :
-'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1'
+'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Tissue', 'NMF11 Th1'
 
 
 ### Mouse CD4T cell (pan-autoimmune peripheral CD4T, converted to mouse, yasumizu et al., unpublished, UMI-based) : `data/NMF.W.CD4T.converted.mouse.csv.gz`
@@ -48,12 +57,16 @@ python NMFprojection.py \
 Genes were mapped to mouse genes from `NMF.W.CD4T.csv.gz` using the mouse-human homolog list.
 
 - Factors :
-'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1'
+'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Tissue', 'NMF11 Th1'
 
 ## Outputs
 - *_projection.csv : decomposited H
 - *_ExplainedVariance.csv : explained variances (last row indicates Evar of all components)
 - *_RMSE.csv : RMSE
+- *_hvgstats.txt : stats for hvg_overlap
+- (*_hvgstats.csv : full stats for hvg_overlap)
+
+We assume NMF W is calculated for highly variable genes (HVGs). To examine whether the selected HVGs of fixed W can capture HVGs in a query dataset, we calculate the proportion of the number of HVGs included in fixed W against the number of HVGs of the query dataset. [`sc.pp.highly_variable_genes`](https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.highly_variable_genes.html#scanpy.pp.highly_variable_genes) in scanpy is used for the calcuration of HVGs of the query datasets. In default settings, 500 is used for the number of query HVGs.
 
 ## Tested environment
 
