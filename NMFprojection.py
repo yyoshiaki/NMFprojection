@@ -107,24 +107,25 @@ if __name__ == "__main__":
     fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
     f_outputprefix = args.outputprefix
 
-    X_norm, X_trunc, df_H, fixed_W = NMFprojection(X, fixed_W, normalized=args.normalized, return_truncated=False)
+    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, return_truncated=False)
     df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
 
-    df_RMSE = calc_RMSE(X_trunc, fixed_W, df_H)
+    df_RMSE = calc_RMSE(X_trunc, fixed_W_trunc, df_H)
     print("## Stats of RSME")
     print(df_RMSE.describe())
     df_RMSE.to_csv('{}_RMSE.csv'.format(f_outputprefix))
 
-    df_ev = calc_EV(X_trunc, fixed_W, df_H)
+    df_ev = calc_EV(X_trunc, fixed_W_trunc, df_H)
     print("## Stats of Explained Variance")
     print(df_ev)
     df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))
 
     if not args.off_calc_hvg_overlap:
-        df_stats = calc_hvg_overlap(X_norm, fixed_W, min_mean=args.min_mean, max_mean=args.max_mean, min_disp=args.min_disp,
+        df_stats = calc_hvg_overlap(X_norm, fixed_W_trunc, min_mean=args.min_mean, max_mean=args.max_mean, min_disp=args.min_disp,
                                     n_top_genes=args.n_top_genes)
-        print('\n Stats for overlap of HVGs')
-        msg = '# Retained genes : %s \n' % fixed_W.shape[0]
+        print('\n## Stats of overlap of HVGs')
+        msg = 'Num. genes in fixed W: %s \n' % fixed_W.shape[0]
+        msg += 'Num. Retained genes (Prop.): %s (%s)\n' % (fixed_W_trunc.shape[0], fixed_W_trunc.shape[0]/fixed_W.shape[0])
         msg += 'Prop. overlap of HVGs : {} in {} query HVGs'.format(
             df_stats.loc[df_stats['highly_variable'], 'selected'].sum() / df_stats['highly_variable'].sum(), 
             df_stats.highly_variable.sum())
