@@ -10,7 +10,7 @@ from sklearn.decomposition import non_negative_factorization
 seed = 0
 
 
-def NMFprojection(X, fixed_W, normalized=False, return_truncated=True):
+def NMFprojection(X, fixed_W, normalized=False, return_truncated=False):
     if X.index.duplicated().sum() > 0:
         raise ValueError("Gene names are duplicated!")
 
@@ -36,7 +36,10 @@ def NMFprojection(X, fixed_W, normalized=False, return_truncated=True):
     H = W.T
     df_H = pd.DataFrame(H, columns=X.columns, index=fixed_W.columns)
     
-    return X, X_trunc, df_H, fixed_W
+    if return_truncated:
+        return X, X_trunc, df_H, fixed_W
+    else:
+        return X, df_H, fixed_W
     
 
 def calc_RMSE(X, fixed_W, df_H):
@@ -107,7 +110,7 @@ if __name__ == "__main__":
     fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
     f_outputprefix = args.outputprefix
 
-    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, return_truncated=False)
+    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, return_truncated=True)
     df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
 
     df_RMSE = calc_RMSE(X_trunc, fixed_W_trunc, df_H)
