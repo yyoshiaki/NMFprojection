@@ -65,10 +65,10 @@ Genes were mapped to mouse genes from `NMF.W.CD4T.csv.gz` using the mouse-human 
 - *_projection.csv : decomposited H
 - *_ExplainedVariance.csv : explained variances (last row indicates Evar of all components)
 - *_RMSE.csv : RMSE
-- *_hvgstats.txt : stats for hvg_overlap
+- *_hvgstats.txt : stats for hvg_overlap (including POH)
 - (*_hvgstats.csv : full stats for hvg_overlap)
 
-We assume NMF W is calculated for highly variable genes (HVGs). To examine whether the selected HVGs of fixed W can capture HVGs in a query dataset, we calculate the proportion of the number of HVGs included in fixed W against the number of HVGs of the query dataset. [`sc.pp.highly_variable_genes`](https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.highly_variable_genes.html#scanpy.pp.highly_variable_genes) in scanpy is used for the calcuration of HVGs of the query datasets. In default settings, 500 is used for the number of query HVGs.
+We assume NMF W is calculated for highly variable genes (HVGs). To examine whether the selected HVGs of fixed W can capture HVGs in a query dataset, we calculate the proportion of the number of HVGs included in fixed W against the number of HVGs of the query dataset as POH (Proportion of Overlapped HVGs). [`sc.pp.highly_variable_genes`](https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.highly_variable_genes.html#scanpy.pp.highly_variable_genes) in scanpy is used for the calcuration of HVGs of the query datasets. In default settings, 500 is used for the number of query HVGs.
 
 ## Tested environment
 

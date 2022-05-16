@@ -129,7 +129,7 @@ if __name__ == "__main__":
         print('\n## Stats of overlap of HVGs')
         msg = 'Num. genes in fixed W: %s \n' % fixed_W.shape[0]
         msg += 'Num. Retained genes (Prop.): %s (%s)\n' % (fixed_W_trunc.shape[0], fixed_W_trunc.shape[0]/fixed_W.shape[0])
-        msg += 'Prop. overlap of HVGs : {} in {} query HVGs'.format(
+        msg += 'Prop. overlap of HVGs (POH) : {} in {} query HVGs'.format(
             df_stats.loc[df_stats['highly_variable'], 'selected'].sum() / df_stats['highly_variable'].sum(), 
             df_stats.highly_variable.sum())
         print(msg)
