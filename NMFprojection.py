@@ -106,7 +106,7 @@ if __name__ == "__main__":
                         help='save full stats of hvg (hvg_overlap).')
     args = parser.parse_args()
 
-    X = pd.read_csv(args.input, index_col=0, delim_whitespace=True) # gene x cell or samples
+    X = pd.read_csv(args.input, index_col=0, sep='\t') # gene x cell or samples
     fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
     f_outputprefix = args.outputprefix
 
