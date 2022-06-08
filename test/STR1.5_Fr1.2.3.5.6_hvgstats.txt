@@ -1,3 +1,3 @@
 Num. genes in fixed W: 1271 
 Num. Retained genes (Prop.): 1119 (0.8804091266719118)
-Prop. overlap of HVGs : 0.542 in 500 query HVGs
+Prop. overlap of HVGs (POH) : 0.542 in 500 query HVGs

@@ -81,8 +81,7 @@ def calc_hvg_overlap(X_norm, fixed_W, min_mean=0.0125, max_mean=3, min_disp=0.1,
   
     return df_stats
 
-
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description = 'NMFprojection')
     parser.add_argument('input', 
                         help='input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.')
@@ -139,3 +138,6 @@ if __name__ == "__main__":
             f.write(msg)
 
     df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))
+
+if __name__ == "__main__":
+    main()

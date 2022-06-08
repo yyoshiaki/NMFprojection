@@ -8,12 +8,14 @@ After installing python3,
 ```
 pip install numpy scipy pandas scikit-learn scanpy
 git clone https://github.com/yyoshiaki/NMFprojection.git
+cd NMFprojection
+pip install -e . 
 ```
 
 ## Usage
 
 ```
-usage: NMFprojection.py [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN]
+usage: NMFproj [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN]
  [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap]
   [--save_fullhvgstats] input fixedW
 
@@ -40,7 +42,7 @@ optional arguments:
 
 example
 ```
-python NMFprojection.py \
+NMFproj \
     --outputprefix test/STR1.5_Fr1.2.3.5.6 \
     test/STR1.5_Fr1.2.3.5.6_scaledTPM.tsv \
     data/NMF.W.CD4T.csv.gz
@@ -134,3 +136,13 @@ dev.off()
 ```
 
 ![test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.png](test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.png)
+
+## Contact
+
+Yoshiaki Yasumizu ([yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp))
+
+## Licence
+
+This software is freely available for academic users. Usage for commercial purposes is not allowed. Please refer to the LICENCE page.
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>

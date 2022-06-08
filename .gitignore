@@ -1,3 +1,3 @@
-.ipynb_checkpoints
 __pycache__
-data/pbmc3k_raw.h5ad
+.ipynb_checkpoints
+.vscode
