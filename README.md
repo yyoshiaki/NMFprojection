@@ -32,12 +32,13 @@ optional arguments:
   --normalized          if normalized and log transformed, specify this flag.
   --min_mean MIN_MEAN   parameter for calculation of HVGs overlap
   --max_mean MAX_MEAN   parameter for calculation of HVGs overlap
-  --min_disp MIN_DISP   parameter for calculation of HVGs overlap.
+  --min_disp MIN_DISP   parameter for calculation of HVGs overlap
   --n_top_genes N_TOP_GENES
-                        parameter for calculation of HVGs overlap.
+                        parameter for calculation of HVGs overlap
   --off_calc_hvg_overlap
                         turn off calc_hvg_overlap
-  --save_fullhvgstats   save full stats of hvg (hvg_overlap).
+  --save_fullhvgstats   save full stats of hvg (hvg_overlap)
+  -v, --version         Show version and exit
 ```
 
 example
