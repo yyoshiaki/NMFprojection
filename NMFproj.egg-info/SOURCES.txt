@@ -13,10 +13,12 @@ NMFproj.egg-info/top_level.txt
 NMFprojection/NMFprojection.py
 NMFprojection/__init__.py
 NMFprojection/__main__.py
+NMFprojection/_version.py
 data/NMF.W.B.csv.gz
 data/NMF.W.CD4T.converted.mouse.csv.gz
 data/NMF.W.CD4T.csv.gz
 data/NMF.W.PBMC.csv.gz
+data/pbmc3k_raw.h5ad
 test/STR1.5_Fr1.2.3.5.6_ExplainedVariance.csv
 test/STR1.5_Fr1.2.3.5.6_RMSE.csv
 test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.png

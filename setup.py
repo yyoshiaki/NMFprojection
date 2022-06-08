@@ -1,11 +1,13 @@
 import setuptools
 
+import NMFprojection
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="NMFproj", # Replace with your own username
-    version="0.0.1",
+    version=attr: NMFprojection._version.__version__,
     install_requires=[
         "requests",
         "pandas",

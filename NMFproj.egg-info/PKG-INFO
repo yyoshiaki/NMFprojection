@@ -124,8 +124,8 @@ Heatmap(df.proj, name=" ",
         right_annotation = rowAnnotation(EVar = anno, simple_anno_size = unit(4, "cm")),
         col = cividis(40), row_labels = row.labels, 
         rect_gp = gpar(col = "white", lwd = 2),
-        width = ncol(mat)*unit(3, "mm"), 
-        height = nrow(mat)*unit(5, "mm")
+        width = ncol(df.pro)*unit(3, "mm"), 
+        height = nrow(df.pro)*unit(5, "mm")
 )
 
 # scaled value

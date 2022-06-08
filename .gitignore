@@ -1,3 +1,6 @@
 __pycache__
 .ipynb_checkpoints
 .vscode
+NMFproj.egg-info
+NMFproj.egg-info/SOURCES.txt
+NMFproj.egg-info/PKG-INFO

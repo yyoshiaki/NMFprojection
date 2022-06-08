@@ -6,6 +6,7 @@ import numpy as np
 
 from sklearn.decomposition import non_negative_factorization
 
+from NMFprojection._version import __version__
 
 seed = 0
 
@@ -103,6 +104,9 @@ def main():
                         help='turn off calc_hvg_overlap')
     parser.add_argument('--save_fullhvgstats', action='store_true', 
                         help='save full stats of hvg (hvg_overlap).')
+    parser.add_argument('-v', '--version', action='version',
+                        version=__version__,
+                        help='Show version and exit')
     args = parser.parse_args()
 
     X = pd.read_csv(args.input, index_col=0, sep='\t') # gene x cell or samples
