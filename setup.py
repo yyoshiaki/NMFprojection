@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="NMFproj", # Replace with your own username
-    version=attr: NMFprojection._version.__version__,
+    version=NMFprojection._version.__version__,
     install_requires=[
         "requests",
         "pandas",
