@@ -4,3 +4,6 @@ __pycache__
 NMFproj.egg-info
 NMFproj.egg-info/SOURCES.txt
 NMFproj.egg-info/PKG-INFO
+.setup.py.swp
+NMFproj.egg-info/entry_points.txt
+NMFproj.egg-info/PKG-INFO
