@@ -1,5 +1,5 @@
 # NMFprojection
-Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed matrix, input gene expression should be scaledTPM or TPM. 
+Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed matrix, input gene expression should be UMI count, scaledTPM or TPM. 
 
 ## Install
 
