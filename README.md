@@ -87,7 +87,7 @@ We assume NMF W is calculated for highly variable genes (HVGs). To examine wheth
 ```{R}
 library(tidyverse)
 library(ComplexHeatmap)
-# library(circlize)
+library(circlize)
 library(pals) 
 
 # setwd("~/NMFprojection")
@@ -95,8 +95,8 @@ df.proj <- read.csv("test/STR1.5_Fr1.2.3.5.6_projection.csv", row.names = 1)
 df.evar <- read.csv("test/STR1.5_Fr1.2.3.5.6_ExplainedVariance.csv", row.names = 1)
 
 row.labels <- c('NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 
-  'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.',
-  'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1')
+                'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.',
+                'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1')
 
 # raw value
 anno = row_anno_barplot(
@@ -109,8 +109,8 @@ Heatmap(df.proj, name=" ",
         right_annotation = rowAnnotation(EVar = anno, simple_anno_size = unit(4, "cm")),
         col = cividis(40), row_labels = row.labels, 
         rect_gp = gpar(col = "white", lwd = 2),
-        width = ncol(df.pro)*unit(3, "mm"), 
-        height = nrow(df.pro)*unit(5, "mm")
+        width = ncol(df.proj)*unit(3, "mm"), 
+        height = nrow(df.proj)*unit(5, "mm")
 )
 
 # scaled value
@@ -125,8 +125,8 @@ p <- Heatmap(t(scale(t(df.proj))), name=" ",
              col = colorRamp2(seq(-3, 3, length = 20), ocean.balance(20)),
              row_labels = row.labels, 
              rect_gp = gpar(col = "white", lwd = 2),
-             width = ncol(mat)*unit(5, "mm"), 
-             height = nrow(mat)*unit(5, "mm"),
+             width = ncol(df.proj)*unit(5, "mm"), 
+             height = nrow(df.proj)*unit(5, "mm"),
              column_split = colnames(df.proj) %>% str_extract("Fr.")
 )
 p
