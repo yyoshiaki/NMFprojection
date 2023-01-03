@@ -6,10 +6,10 @@ Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed
 After installing python3,
 
 ```
-pip install numpy scipy pandas scikit-learn scanpy
+pip install --user numpy scipy pandas scikit-learn scanpy
 git clone https://github.com/yyoshiaki/NMFprojection.git
 cd NMFprojection
-pip install -e . 
+pip install --user -e . 
 ```
 
 ## Usage

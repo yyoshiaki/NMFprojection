@@ -7,3 +7,6 @@ NMFproj.egg-info/PKG-INFO
 .setup.py.swp
 NMFproj.egg-info/entry_points.txt
 NMFproj.egg-info/PKG-INFO
+.Rproj.user
+NMFprojection.Rproj
+._PBMC.ipynb
