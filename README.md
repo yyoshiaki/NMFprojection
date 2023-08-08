@@ -1,4 +1,4 @@
-# NMFprojection
+# NMFproj
 Perform NMF decomposition with pre-computed matrix W. For UMI-based pre-computed matrix, input gene expression should be UMI count, scaledTPM or TPM. 
 
 ## Install
@@ -15,17 +15,17 @@ pip install -e .
 or 
 
 ```
-pip install https://github.com/yyoshiaki/NMFprojection.git
+pip install git+https://github.com/yyoshiaki/NMFprojection.git
 ```
 
-## Usage
+## Usage CLI
 
 ```
 usage: NMFproj [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--scale_output] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP]
                [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_fullhvgstats] [-v]
                input fixedW
 
-NMFprojection
+NMFproj
 
 positional arguments:
   input                 input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.
@@ -56,12 +56,32 @@ NMFproj \
     data/NMF.W.CD4T.csv.gz
 ```
 
+## Usage in python
+
+Users can import NMFprojection and run it in python codes.
+
+```
+from NMFproj import *
+
+X_norm, X_trunc, df_H, fixed_W_trunc = NMFproj(X, fixed_W, return_truncated=True, normalized=True)
+df_ev = calc_EV(X_trunc, fixed_W_trunc, df_H)
+df_stats = calc_hvg_overlap(X_norm, fixed_W_trunc, min_mean=0.0125, max_mean=3, min_disp=0.1,
+                            n_top_genes=500)
+print('\n## Stats of overlap of HVGs')
+msg = 'Num. genes in fixed W: %s \n' % fixed_W.shape[0]
+msg += 'Num. Retained genes (Prop.): %s (%s)\n' % (fixed_W_trunc.shape[0], fixed_W_trunc.shape[0]/fixed_W.shape[0])
+msg += 'Prop. overlap of HVGs (POH) : {} in {} query HVGs'.format(
+    df_stats.loc[df_stats['highly_variable'], 'selected'].sum() / df_stats['highly_variable'].sum(), 
+    df_stats.highly_variable.sum())
+print(msg)
+```
+
 ## Available precomputed NMF W
 
 ### Human CD4T cell (pan-autoimmune peripheral CD4T, yasumizu et al., unpublished, UMI-based) : `data/NMF.W.CD4T.csv.gz`
 
 - Factors :
-'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Tissue', 'NMF11 Th1'
+'NMF0 Cytotoxic-F', 'NMF1 Treg-F', 'NMF2 Th17-F', 'NMF3 Naive-F', 'NMF4 Act-F', 'NMF5 TregEff/Th2-F', 'NMF6 Tfh-F', 'NMF7 IFN-F', 'NMF8 Cent. Mem.-F', 'NMF9 Thymic Emi.-F', 'NMF10 Tissue-F', 'NMF11 Th1-F'
 
 
 ### Mouse CD4T cell (pan-autoimmune peripheral CD4T, converted to mouse, yasumizu et al., unpublished, UMI-based) : `data/NMF.W.CD4T.converted.mouse.csv.gz`
@@ -69,7 +89,7 @@ NMFproj \
 Genes were mapped to mouse genes from `NMF.W.CD4T.csv.gz` using the mouse-human homolog list.
 
 - Factors :
-'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Tissue', 'NMF11 Th1'
+'NMF0 Cytotoxic-F', 'NMF1 Treg-F', 'NMF2 Th17-F', 'NMF3 Naive-F', 'NMF4 Act-F', 'NMF5 TregEff/Th2-F', 'NMF6 Tfh-F', 'NMF7 IFN-F', 'NMF8 Cent. Mem.-F', 'NMF9 Thymic Emi.-F', 'NMF10 Tissue-F', 'NMF11 Th1-F'
 
 ## Define gene feature matrix using NMF
 
@@ -77,7 +97,7 @@ Please refer to the tutorial [https://github.com/yyoshiaki/NMFprojection/blob/ma
 
 ## Use cNMF to define gene feature matrix
 
-Users can use gene feature matrix (Gene Expression Programs / GEPs) defined by [cNMF](https://github.com/dylkot/cNMF). 
+Users can also use gene feature matrix (Gene Expression Programs / GEPs) defined by [cNMF](https://github.com/dylkot/cNMF). NMFproj use consensus GEPs before the refit (e.g. XXX.spectra.k_X.dt_XXX.consensus.df.npz in cnmf_tpm directory). Please refere to the notebook [https://github.com/yyoshiaki/NMFprojection/blob/main/cNMF/cNMF_PBMC.ipynb](https://github.com/yyoshiaki/NMFprojection/blob/main/cNMF/cNMF_PBMC.ipynb).
 
 ## Outputs
 - *_projection.csv : decomposited H
@@ -86,16 +106,16 @@ Users can use gene feature matrix (Gene Expression Programs / GEPs) defined by [
 - *_hvgstats.txt : stats for hvg_overlap (including POH)
 - (*_hvgstats.csv : full stats for hvg_overlap)
 
-We assume NMF W is calculated for highly variable genes (HVGs). To examine whether the selected HVGs of fixed W can capture HVGs in a query dataset, we calculate the proportion of the number of HVGs included in fixed W against the number of HVGs of the query dataset as POH (Proportion of Overlapped HVGs). [`sc.pp.highly_variable_genes`](https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.highly_variable_genes.html#scanpy.pp.highly_variable_genes) in scanpy is used for the calcuration of HVGs of the query datasets. In default settings, 500 is used for the number of query HVGs.
+We assume NMF W is calculated for highly variable genes (HVGs). To examine whether the selected HVGs of fixed W can capture HVGs in a query dataset, we calculate the proportion of the number of HVGs included in fixed W against the number of HVGs of the qery dataset as POH (Proportion of Overlapped HVGs). [`sc.pp.highly_variable_genes`](https://scanpy.readthedocs.io/en/stable/generated/scanpy.pp.highly_variable_genes.html#scanpy.pp.highly_variable_genes) in scanpy is used for the calcuration of HVGs of the query datasets. In default settings, 500 is used for the number of query HVGs.
 
 ## Tested environment
 
-- Python==3.8.10
-- numpy==1.20.3
-- scipy==1.7.1
-- pandas==1.3.3
-- scikit-learn==0.24.2
-- scanpy==1.8.1
+- Python==3.9.16
+- numpy==1.21.6
+- scipy==1.9.1
+- pandas==1.4.4
+- scikit-learn==1.0.2
+- scanpy==1.9.1
 
 ## Example of visualization
 
@@ -109,9 +129,9 @@ library(pals)
 df.proj <- read.csv("test/STR1.5_Fr1.2.3.5.6_projection.csv", row.names = 1)
 df.evar <- read.csv("test/STR1.5_Fr1.2.3.5.6_ExplainedVariance.csv", row.names = 1)
 
-row.labels <- c('NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 
-                'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.',
-                'NMF9 Thymic Emi.', 'NMF10 Resident', 'NMF11 Th1')
+row.labels <- c('NMF0 Cytotoxic-F', 'NMF1 Treg-F', 'NMF2 Th17-F', 'NMF3 Naive-F', 
+                'NMF4 Act-F', 'NMF5 Th2-F', 'NMF6 Tfh-F', 'NMF7 IFN-F', 'NMF8 Cent. Mem.-F',
+                'NMF9 Thymic Emi.-F', 'NMF10 Tissue-F', 'NMF11 Th1-F')
 
 # raw value
 anno = row_anno_barplot(
