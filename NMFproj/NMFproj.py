@@ -3,17 +3,38 @@ import warnings
 
 import pandas as pd
 import numpy as np
-
 from sklearn.decomposition import non_negative_factorization
 
 from ._version import __version__
 
-
-
 seed = 0
 
 
-def NMFprojection(X, fixed_W, normalized=False, return_truncated=False):
+def NMFproj(X, fixed_W, normalized=False, return_truncated=False):
+    """
+    Parameters
+    ----------
+    X : pandas.DataFrame
+        input data. Row: genes, Columns: samples.
+    fixed_W : pandas.DataFrame
+        Precomputed W. Row: genes, Columns: components.
+    normalized : bool
+        whether input data is normalized or not
+    return_truncated : bool
+        whether return truncated data or not
+
+    Returns
+    -------
+    X : pandas.DataFrame
+        input data
+    X_trunc : pandas.DataFrame
+        truncated input data (only when return_truncated is True)
+    df_H : pandas.DataFrame
+        projected cell feature matrix (H)
+    fixed_W : pandas.DataFrame
+        fixed cell feature matrix (W)
+    """
+
     if X.index.duplicated().sum() > 0:
         raise ValueError("Gene names are duplicated!")
 
@@ -85,7 +106,7 @@ def calc_hvg_overlap(X_norm, fixed_W, min_mean=0.0125, max_mean=3, min_disp=0.1,
     return df_stats
 
 def main():
-    parser = argparse.ArgumentParser(description = 'NMFprojection')
+    parser = argparse.ArgumentParser(description = 'NMFproj')
     parser.add_argument('input', 
                         help='input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.')
     parser.add_argument('fixedW', 
@@ -132,7 +153,7 @@ def main():
     
     f_outputprefix = args.outputprefix
 
-    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, 
+    X_norm, X_trunc, df_H, fixed_W_trunc = NMFproj(X, fixed_W, normalized=args.normalized, 
                                                         return_truncated=True)
     if args.scale_output:
         df_H_scale = (df_H.T / df_H.max(axis=1)).T
