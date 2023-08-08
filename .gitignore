@@ -10,3 +10,11 @@ NMFproj.egg-info/PKG-INFO
 .Rproj.user
 NMFprojection.Rproj
 ._PBMC.ipynb
+dev
+dev/
+cNMF/PBMC
+cNMF/data
+test/STR1.5_Fr1.2.3.5.6_RMSE.csv
+test/STR1.5_Fr1.2.3.5.6_projection.csv
+test/STR1.5_Fr1.2.3.5.6_hvgstats.txt
+test/STR1.5_Fr1.2.3.5.6_ExplainedVariance.csv

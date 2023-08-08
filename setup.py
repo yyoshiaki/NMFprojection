@@ -1,13 +1,13 @@
 import setuptools
 
-import NMFprojection
+import scripts.NMFprojection
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="NMFproj", # Replace with your own username
-    version=NMFprojection._version.__version__,
+    version=scripts._version.__version__,
     install_requires=[
         "requests",
         "pandas",
@@ -17,7 +17,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'NMFproj=NMFprojection:main',
+            'NMFproj=scripts.NMFprojection:main',
         ],
     },
     author="Yoshiaki Yasumizu",

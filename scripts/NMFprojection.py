@@ -6,7 +6,9 @@ import numpy as np
 
 from sklearn.decomposition import non_negative_factorization
 
-from NMFprojection._version import __version__
+from ._version import __version__
+
+
 
 seed = 0
 
@@ -18,7 +20,7 @@ def NMFprojection(X, fixed_W, normalized=False, return_truncated=False):
     # normalize X
     if normalized == False:
         X = (X * 10**4) / X.sum()
-        X = np.log1p(X+1)
+        X = np.log1p(X)
 
     if (normalized == False) & (X.max().max() > 20):
         warnings.warn("input X looks not normalized though normalized flag was passed")
@@ -87,11 +89,13 @@ def main():
     parser.add_argument('input', 
                         help='input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.')
     parser.add_argument('fixedW', 
-                        help='input csv/tsv of precomputed W. Row: genes, Columns: components.')
+                        help='input csv/tsv/npz(cNMF) of precomputed W. Row: genes, Columns: components.')
     parser.add_argument('--outputprefix', default='NMF',
                         help='output prefix. default=NMF')
     parser.add_argument('--normalized', action='store_true', 
                         help='if normalized and log transformed, specify this flag.')
+    parser.add_argument('--scale_output', action='store_true', 
+                        help='if scale output, specify this flag. default=False', default=False)
     parser.add_argument('--min_mean', type=float, default=0.0125,
                         help='parameter for calculation of HVGs overlap')
     parser.add_argument('--max_mean', type=float, default=3,
@@ -109,12 +113,33 @@ def main():
                         help='Show version and exit')
     args = parser.parse_args()
 
-    X = pd.read_csv(args.input, index_col=0, sep='\t') # gene x cell or samples
-    fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components
+    if args.input.endswith('.csv') or args.input.endswith('.csv.gz'):
+        X = pd.read_csv(args.input, index_col=0) # gene x cell or samples
+    elif args.input.endswith('.tsv') or args.input.endswith('.tsv.gz'):
+        X = pd.read_csv(args.input, index_col=0, sep='\t') # gene x cell or samples
+    else:
+        raise ValueError('input must be csv/tsv')
+
+    if args.fixedW.endswith('.npz'):
+        data = np.load(args.fixedW, allow_pickle=True)
+        fixed_W = pd.DataFrame(data['data'], columns=data['columns'], index=data['index']).T
+    elif args.fixedW.endswith('.csv') or args.fixedW.endswith('.csv.gz'):
+        fixed_W = pd.read_csv(args.fixedW, index_col=0) # gene' x components    
+    elif args.fixedW.endswith('.tsv') or args.fixedW.endswith('.tsv.gz'):
+        fixed_W = pd.read_csv(args.fixedW, index_col=0, sep='\t') # gene' x components
+    else:
+        raise ValueError('fixedW must be csv/tsv/npz')
+    
     f_outputprefix = args.outputprefix
 
-    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, return_truncated=True)
-    df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
+    X_norm, X_trunc, df_H, fixed_W_trunc = NMFprojection(X, fixed_W, normalized=args.normalized, 
+                                                        return_truncated=True)
+    if args.scale_output:
+        df_H_scale = (df_H.T / df_H.max(axis=1)).T
+        df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
+        df_H_scale.to_csv('{}_projection_scale.csv'.format(f_outputprefix))
+    else:
+        df_H.to_csv('{}_projection.csv'.format(f_outputprefix))
 
     df_RMSE = calc_RMSE(X_trunc, fixed_W_trunc, df_H)
     print("## Stats of RSME")

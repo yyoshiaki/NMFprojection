@@ -9,35 +9,42 @@ After installing python3,
 pip install --user numpy scipy pandas scikit-learn scanpy
 git clone https://github.com/yyoshiaki/NMFprojection.git
 cd NMFprojection
-pip install --user -e . 
+pip install -e . 
+```
+
+or 
+
+```
+pip install https://github.com/yyoshiaki/NMFprojection.git
 ```
 
 ## Usage
 
 ```
-usage: NMFproj [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--min_mean MIN_MEAN]
- [--max_mean MAX_MEAN] [--min_disp MIN_DISP] [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap]
-  [--save_fullhvgstats] input fixedW
+usage: NMFproj [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--scale_output] [--min_mean MIN_MEAN] [--max_mean MAX_MEAN] [--min_disp MIN_DISP]
+               [--n_top_genes N_TOP_GENES] [--off_calc_hvg_overlap] [--save_fullhvgstats] [-v]
+               input fixedW
 
 NMFprojection
 
 positional arguments:
   input                 input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.
-  fixedW                input csv/tsv of precomputed W. Row: genes, Columns: components.
+  fixedW                input csv/tsv/npz(cNMF) of precomputed W. Row: genes, Columns: components.
 
 optional arguments:
   -h, --help            show this help message and exit
   --outputprefix OUTPUTPREFIX
                         output prefix. default=NMF
   --normalized          if normalized and log transformed, specify this flag.
+  --scale_output        if scale output, specify this flag. default=False
   --min_mean MIN_MEAN   parameter for calculation of HVGs overlap
   --max_mean MAX_MEAN   parameter for calculation of HVGs overlap
-  --min_disp MIN_DISP   parameter for calculation of HVGs overlap
+  --min_disp MIN_DISP   parameter for calculation of HVGs overlap.
   --n_top_genes N_TOP_GENES
-                        parameter for calculation of HVGs overlap
+                        parameter for calculation of HVGs overlap.
   --off_calc_hvg_overlap
                         turn off calc_hvg_overlap
-  --save_fullhvgstats   save full stats of hvg (hvg_overlap)
+  --save_fullhvgstats   save full stats of hvg (hvg_overlap).
   -v, --version         Show version and exit
 ```
 
@@ -63,6 +70,14 @@ Genes were mapped to mouse genes from `NMF.W.CD4T.csv.gz` using the mouse-human 
 
 - Factors :
 'NMF0 Cytotoxic', 'NMF1 Treg', 'NMF2 Th17', 'NMF3 Naiveness', 'NMF4 Act', 'NMF5 Th2', 'NMF6 Tfh', 'NMF7 IFN', 'NMF8 Cent. Mem.', 'NMF9 Thymic Emi.', 'NMF10 Tissue', 'NMF11 Th1'
+
+## Define gene feature matrix using NMF
+
+Please refer to the tutorial [https://github.com/yyoshiaki/NMFprojection/blob/main/PBMC.ipynb](https://github.com/yyoshiaki/NMFprojection/blob/main/PBMC.ipynb) to make a custom gene feature matrix.
+
+## Use cNMF to define gene feature matrix
+
+Users can use gene feature matrix (Gene Expression Programs / GEPs) defined by [cNMF](https://github.com/dylkot/cNMF). 
 
 ## Outputs
 - *_projection.csv : decomposited H
@@ -138,9 +153,9 @@ dev.off()
 
 ![test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.png](test/STR1.5_Fr1.2.3.5.6_heatmap_zscore.png)
 
-## Contact
+## Citation
 
-Yoshiaki Yasumizu ([yyasumizu@ifrec.osaka-u.ac.jp](yyasumizu@ifrec.osaka-u.ac.jp))
+Yasumizu, Yoshiaki, Daiki Takeuchi, Reo Morimoto, Yusuke Takeshima, Tatsusada Okuno, Makoto Kinoshita, Takayoshi Morita, et al. 2023. “Single-Cell Transcriptome Landscape of Circulating CD4+ T Cell Populations in Human Autoimmune Diseases.” bioRxiv. [https://doi.org/10.1101/2023.05.09.540089](https://doi.org/10.1101/2023.05.09.540089).
 
 ## Licence
 
