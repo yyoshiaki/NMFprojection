@@ -5,6 +5,10 @@ import pandas as pd
 import numpy as np
 from sklearn.decomposition import non_negative_factorization
 
+import anndata as ad 
+import scanpy as sc 
+import scipy.sparse as sp
+
 from ._version import __version__
 
 seed = 0
@@ -14,7 +18,7 @@ def NMFproj(X, fixed_W, normalized=False, return_truncated=False):
     """
     Parameters
     ----------
-    X : pandas.DataFrame
+    X : pandas.DataFrame or Anndata
         input data. Row: genes, Columns: samples.
     fixed_W : pandas.DataFrame
         Precomputed W. Row: genes, Columns: components.
@@ -34,37 +38,105 @@ def NMFproj(X, fixed_W, normalized=False, return_truncated=False):
     fixed_W : pandas.DataFrame
         fixed cell feature matrix (W)
     """
+    # Check input data type
+    is_anndata = isinstance(X, ad.AnnData)
+    is_dataframe = isinstance(X, pd.DataFrame)
 
-    if X.index.duplicated().sum() > 0:
-        raise ValueError("Gene names are duplicated!")
 
-    # Check data normalization
-    if (normalized == True) and (X.max().max() > 20):
-        warnings.warn("Input appears unnormalized, but normalized=True was passed")
-    if (normalized == False) and (X.max().max() < 20):
-        warnings.warn("Input appears normalized, but normalized=False was passed")
-    
-    # normalize X
-    if normalized == False:
-        X = (X * 10**4) / X.sum()
-        X = np.log1p(X)
+    if is_anndata:
+        if X.var_names.duplicated().any():
+            raise ValueError("Gene names are duplicated!")
 
-    # intersect genes
-    genes = list(set(X.index) & set(fixed_W.index))
-    X_trunc = X.loc[genes]
-    fixed_W = fixed_W.loc[genes]
-    fixed_H = fixed_W.T
-    
-    W, _, n_iter = non_negative_factorization(np.array(X_trunc.T, dtype = 'float64'), n_components=fixed_H.shape[0], 
-                                          init='custom', random_state=seed, update_H=False, 
-                                          H=np.array(fixed_H, dtype = 'float64'))
-    H = W.T
-    df_H = pd.DataFrame(H, columns=X.columns, index=fixed_W.columns)
-    
-    if return_truncated:
-        return X, X_trunc, df_H, fixed_W
-    else:
-        return X, df_H, fixed_W
+        A = X.X
+        try:
+            pre_max = float(A.max()) if not sp.issparse(A) else float(A.max())
+        except Exception:
+            pre_max = float(np.asarray(A).max())
+
+        if normalized and pre_max > 20:
+            warnings.warn("Input appears unnormalized, but normalized=True was passed")
+        if (not normalized) and pre_max < 20:
+            warnings.warn("Input appears normalized, but normalized=False was passed")
+
+        if not normalized:
+            # if X.raw is None:
+            #     X.raw = X.copy()
+            sc.pp.normalize_total(X, target_sum=1e4, copy=False)
+            sc.pp.log1p(X, copy=False)
+
+        A = X.X  
+        if sp.issparse(A):
+            M = A.T.tocsr()                         
+            mat = M.toarray()                         
+        else:
+            mat = np.asarray(A.T, dtype=float)        
+
+        n_genes = X.n_vars
+        n_cells = X.n_obs
+        if mat.ndim == 1:
+            mat = mat.reshape(n_genes, 1)
+
+        if mat.shape != (n_genes, n_cells):
+            raise ValueError(
+                f"AnnData shape mismatch: mat {mat.shape} vs expected ({n_genes}, {n_cells}); X.X shape={X.X.shape}"
+            )
+
+        X_df = pd.DataFrame(mat, index=X.var_names, columns=X.obs_names)
+
+        genes = fixed_W.index.intersection(X_df.index)
+        if genes.empty:
+            raise ValueError("No overlapping genes between X and fixed_W.")
+
+        X_trunc = X_df.loc[genes]
+        fixed_W_trunc = fixed_W.loc[genes]
+        fixed_H = fixed_W_trunc.T
+
+        W_tmp, _, _ = non_negative_factorization(
+            X_trunc.T.astype("float64").to_numpy(),  
+            n_components=fixed_H.shape[0],
+            init="custom",
+            update_H=False,
+            H=fixed_H.astype("float64").to_numpy()
+        )
+        H = W_tmp.T  
+        df_H = pd.DataFrame(H, columns=X_df.columns, index=fixed_W_trunc.columns)
+
+        if return_truncated:
+            return X_df, X_trunc, df_H, fixed_W_trunc
+        else:
+            return X_df, df_H, fixed_W_trunc
+        
+    elif is_dataframe:
+        if X.index.duplicated().sum() > 0:
+            raise ValueError("Gene names are duplicated!")
+
+        # Check data normalization
+        if (normalized == True) and (X.max().max() > 20):
+            warnings.warn("Input appears unnormalized, but normalized=True was passed")
+        if (normalized == False) and (X.max().max() < 20):
+            warnings.warn("Input appears normalized, but normalized=False was passed")
+        
+        # normalize X
+        if normalized == False:
+            X = (X * 10**4) / X.sum()
+            X = np.log1p(X)
+
+        # intersect genes
+        genes = list(set(X.index) & set(fixed_W.index))
+        X_trunc = X.loc[genes]
+        fixed_W = fixed_W.loc[genes]
+        fixed_H = fixed_W.T
+        
+        W, _, n_iter = non_negative_factorization(np.array(X_trunc.T, dtype = 'float64'), n_components=fixed_H.shape[0], 
+                                            init='custom', random_state=seed, update_H=False, 
+                                            H=np.array(fixed_H, dtype = 'float64'))
+        H = W.T
+        df_H = pd.DataFrame(H, columns=X.columns, index=fixed_W.columns)
+        
+        if return_truncated:
+            return X, X_trunc, df_H, fixed_W
+        else:
+            return X, df_H, fixed_W
     
 
 def calc_RMSE(X, fixed_W, df_H):
@@ -85,7 +157,6 @@ def calc_EV(X, fixed_W, df_H):
 
 
 def calc_hvg_overlap(X_norm, fixed_W, min_mean=0.0125, max_mean=3, min_disp=0.1, n_top_genes=500):
-    import scanpy as sc
     tup_blacklist = ('TRAV', 'TRAJ', 'TRBV', 'TRBD', 'TRBJ',
                 'TRGV', 'TRGJ', 'TRDV', 'TRDD', 'TRDJ',
                 'IGKV', 'IGKJ', 'IGLV', 'IGLJ', 'IGHV', 'IGHD', 'IGHJ')
@@ -139,8 +210,10 @@ def main():
         X = pd.read_csv(args.input, index_col=0) # gene x cell or samples
     elif args.input.endswith('.tsv') or args.input.endswith('.tsv.gz'):
         X = pd.read_csv(args.input, index_col=0, sep='\t') # gene x cell or samples
+    elif args.input.endswith('.h5ad'):
+        X = sc.read_h5ad(args.input)
     else:
-        raise ValueError('input must be csv/tsv')
+        raise ValueError('input must be csv/tsv/h5ad')
 
     if args.fixedW.endswith('.npz'):
         data = np.load(args.fixedW, allow_pickle=True)
@@ -171,7 +244,6 @@ def main():
     df_ev = calc_EV(X_trunc, fixed_W_trunc, df_H)
     print("## Stats of Explained Variance")
     print(df_ev)
-    df_ev.to_csv('{}_ExplainedVariance.csv'.format(f_outputprefix))
 
     if not args.off_calc_hvg_overlap:
         df_stats = calc_hvg_overlap(X_norm, fixed_W_trunc, min_mean=args.min_mean, max_mean=args.max_mean, min_disp=args.min_disp,
