@@ -1,6 +1,6 @@
 import argparse
 import warnings
-
+import scanpy as sc
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import non_negative_factorization
@@ -46,8 +46,8 @@ def NMFproj(X, fixed_W, normalized=False, return_truncated=False):
     
     # normalize X
     if normalized == False:
-        X = (X * 10**4) / X.sum()
-        X = np.log1p(X)
+        sc.pp.normalize_total(adata, target_sum=1e4)
+        sc.pp.log1p(adata)
 
     # intersect genes
     genes = list(set(X.index) & set(fixed_W.index))
