@@ -38,15 +38,16 @@ def NMFproj(X, fixed_W, normalized=False, return_truncated=False):
     if X.index.duplicated().sum() > 0:
         raise ValueError("Gene names are duplicated!")
 
+    # Check data normalization
+    if (normalized == True) and (X.max().max() > 20):
+        warnings.warn("Input appears unnormalized, but normalized=True was passed")
+    if (normalized == False) and (X.max().max() < 20):
+        warnings.warn("Input appears normalized, but normalized=False was passed")
+    
     # normalize X
     if normalized == False:
         X = (X * 10**4) / X.sum()
         X = np.log1p(X)
-
-    if (normalized == False) & (X.max().max() > 20):
-        warnings.warn("input X looks not normalized though normalized flag was passed")
-    if (normalized == True) & (X.max().max() < 20):
-        warnings.warn("input X looks normalized though normalized flag was not passed")
 
     # intersect genes
     genes = list(set(X.index) & set(fixed_W.index))
