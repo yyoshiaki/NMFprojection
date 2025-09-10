@@ -28,7 +28,7 @@ usage: NMFproj [-h] [--outputprefix OUTPUTPREFIX] [--normalized] [--scale_output
 NMFproj
 
 positional arguments:
-  input                 input csv/tsv of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.
+  input                 input csv/tsv/h5ad of gene expressions. UMI, scaledTPM, TPM can be used. Row: genes, Columns: samples.
   fixedW                input csv/tsv/npz(cNMF) of precomputed W. Row: genes, Columns: components.
 
 optional arguments:
@@ -48,11 +48,17 @@ optional arguments:
   -v, --version         Show version and exit
 ```
 
-example
+Examples: 
 ```
 NMFproj \
     --outputprefix test/STR1.5_Fr1.2.3.5.6 \
     test/STR1.5_Fr1.2.3.5.6_scaledTPM.tsv \
+    data/NMF.W.CD4T.csv.gz
+```
+```
+NMFproj \
+    --outputprefix test/STR1.5_Fr1.2.3.5.6 \
+    test/PBMC_CD4T_panautoimmune.subsample1000.h5ad \
     data/NMF.W.CD4T.csv.gz
 ```
 
@@ -110,11 +116,11 @@ We assume NMF W is calculated for highly variable genes (HVGs). To examine wheth
 
 ## Tested environment
 
-- Python==3.9.16
-- numpy==1.21.6
-- scipy==1.9.1
-- pandas==1.4.4
-- scikit-learn==1.0.2
+- Python==3.11.11
+- numpy==2.2.6
+- scipy==1.16.1
+- pandas==2.3.2
+- scikit-learn==1.7.2
 - scanpy==1.9.1
 
 ## Example of visualization
