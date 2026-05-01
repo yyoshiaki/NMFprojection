@@ -1,2 +1,2 @@
 [console_scripts]
-NMFproj = NMFprojection:main
+NMFproj = NMFproj.NMFproj:main
