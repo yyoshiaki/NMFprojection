@@ -1,13 +1,15 @@
 import setuptools
+import re
 
-import NMFproj.NMFproj
+with open("NMFproj/_version.py", "r") as f:
+    version = re.search(r'__version__\s*=\s*["\']([^"\']+)', f.read()).group(1)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="NMFproj", # Replace with your own username
-    version=NMFproj._version.__version__,
+    version=version,
     install_requires=[
         "requests",
         "pandas",

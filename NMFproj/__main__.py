@@ -1,3 +1,3 @@
-from .NMFprojection import main
+from .NMFproj import main
 
 main()
